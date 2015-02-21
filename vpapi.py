@@ -16,7 +16,7 @@ __all__ = [
 	'timezone', 'utc_to_local', 'local_to_utc',
 ]
 
-#SERVER_NAME = '127.0.0.1:5000'
+SERVER_NAME = 'api.parldata.eu'
 SERVER_CERT = 'server_cert_prod.pem'
 PARLIAMENT = ''
 PAYLOAD_HEADERS = {
