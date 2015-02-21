@@ -104,4 +104,4 @@ def cs2iso(datestring):
     try:
         return datetime.strptime(datestring, '%d.%m.%Y').date().isoformat()
     except ValueError:
-        return datetime.strptime(datestring, '%d.%m.%Y %H:%M').isoformat(' ')
+        return datetime.strptime(datestring, '%d.%m.%YT%H:%M').isoformat('T')

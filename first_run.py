@@ -5,6 +5,7 @@ import io
 
 vpapi.parliament('cz/psp')
 vpapi.authorize(authentication.username,authentication.password)
+vpapi.timezone('Europe/Prague')
 
 def save(scraped):
     import json
@@ -200,6 +201,7 @@ def result2result(res):
 def savemotion(self):
     #r = vpapi.get('motions', where={'identifiers': {'$elemMatch': self["identifiers"][0]}})
 #   if not r['_items']:
+    print(self)
     r = vpapi.post("motions",self)
 #   else:
 #       r = vpapi.put('motions/%s' % r['_items'][0]['id'],self)
@@ -212,6 +214,7 @@ def savemotion(self):
 def savevoteevent(self):
   #r = vpapi.get('vote-events', where={'identifier':self["identifier"]})
   #if not r['_items']:
+    print(self)
     r = vpapi.post("vote-events",self)
   #else:
   #  r = vpapi.patch('vote-events/%s' % r['_items'][0]['id'],self)
@@ -251,7 +254,7 @@ def saveallmotionsandvoteevents(hl_hlasovani):
             #'identifiers': [{'identifier': row[0].strip(), 'scheme': 'psp.cz/hlasovani'}]
             "sources": [{'url':"http://www.psp.cz/sqw/hlasy.sqw?g=" + row[0].strip()}]
         }
-        #print(motion)
+        print(motion)
         r_motion = savemotion(motion)
       
         #r_motion = vpapi.get('motions', where={'sources': {'$elemMatch': {"identifier": row[0].strip(), "scheme": "psp.cz/hlasovani"}}}) #<-wrong: should be with "sources"
@@ -260,8 +263,8 @@ def saveallmotionsandvoteevents(hl_hlasovani):
                 "id": row[0].strip(),
                 "motion_id": r_motion['id'],
                 'identifier': row[0].strip(),
-                "legislative_session": row[2].strip(),
-                "start_date": scrapeutils.cs2iso(row[5].strip() + " " + row[6].strip()),
+                #"legislative_session_id": row[2].strip(),  #not implemented in api yet
+                "start_date": vpapi.local_to_utc(scrapeutils.cs2iso(row[5].strip() + "T" + row[6].strip())),
                 "result": result2result(row[14].strip()),
             }
             r_voteevent = savevoteevent(vote_event)
@@ -270,11 +273,10 @@ def saveallmotionsandvoteevents(hl_hlasovani):
 
 #terms = [1993, 1996, 1998, 2002, 2006, 2010, 2013]
 terms = [2013]
-#for term in terms:
-#    import io
-#    zfile = scrapeutils.download('http://www.psp.cz/eknih/cdrom/opendata/hl-'+str(term)+'ps.zip',zipped=True)
-#    hl_hlasovani = scrapeutils.zipfile2rows(zfile,'hl'+str(term)+'s.unl')
-#    saveallmotionsandvoteevents(hl_hlasovani)
+for term in terms:
+    zfile = scrapeutils.download('http://www.psp.cz/eknih/cdrom/opendata/hl-'+str(term)+'ps.zip',zipped=True)
+    hl_hlasovani = scrapeutils.zipfile2rows(zfile,'hl'+str(term)+'s.unl')
+    saveallmotionsandvoteevents(hl_hlasovani)
 
 
 def savevotes(hl_poslanec):
@@ -405,7 +407,7 @@ for term in terms:
                 j = j + 1
                 print(str(j) + ':' + str(j/200))
             j = 0
-            raise(Exception)
+#            raise(Exception)
             for k in votes:
                 if (j == 10):
                     vpapi.post("votes",votesli)

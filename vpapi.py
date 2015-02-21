@@ -1,13 +1,20 @@
-import requests
 import json
 import base64
+from datetime import datetime, date, time
+
+import requests
+import pytz
 import authentication
 
 """Visegrad+ parliament API client module.
 Contains functions to make API requests easily.
 """
 
-__all__ = ['parliament', 'authorize', 'deauthorize', 'get', 'post', 'put', 'patch', 'delete']
+__all__ = [
+	'parliament', 'authorize', 'deauthorize',
+	'get', 'getall', 'getfirst', 'post', 'put', 'patch', 'delete',
+	'timezone', 'utc_to_local', 'local_to_utc',
+]
 
 #SERVER_NAME = '127.0.0.1:5000'
 SERVER_CERT = 'server_cert_prod.pem'
@@ -135,3 +142,60 @@ def delete(resource):
 	)
 	resp.raise_for_status()
 	return resp.json()
+
+def timezone(name):
+	"""Sets the local timezone to be used by `utc_to_local()` and
+	`local_to_utc()` helper functions.
+	"""
+	global LOCAL_TIMEZONE
+	LOCAL_TIMEZONE = pytz.timezone(name)
+
+
+def utc_to_local(val, to_string=None):
+	"""Converts datetime or its string representation in ISO 8601 format
+	from UTC time returned by API to local time. The local timezone must
+	be previously set by `vpapi.timezone()` function.
+
+	Returns the result in the same type as input if `to_string` is not
+	given. String output or datetime output can be enforced by setting
+	`to_string` to True or False respectively.
+	"""
+	if LOCAL_TIMEZONE is None:
+		raise ValueError('The local timezone must be set first, use vpapi.timezone()')
+	format = '%Y-%m-%dT%H:%M:%S'
+	out = datetime.strptime(val, format) if isinstance(val, str) else val
+	if not isinstance(out, datetime):
+		raise TypeError('Only datetime object or ISO 8601 string can be converted')
+
+	out = pytz.utc.localize(out)
+	out = out.astimezone(LOCAL_TIMEZONE)
+
+	if to_string or to_string is None and isinstance(val, str):
+		return out.strftime(format)
+	else:
+		return out
+
+
+def local_to_utc(val, to_string=True):
+	"""Converts datetime or its string representation in ISO 8601 format
+	from local time to UTC time required by API. The local timezone must
+	be previously set by `vpapi.timezone()` function.
+
+	Returns the result in the same type as input if `to_string` is not
+	given. String output or datetime output can be enforced by setting
+	`to_string` to True or False respectively.
+	"""
+	if LOCAL_TIMEZONE is None:
+		raise ValueError('The local timezone must be set first, use vpapi.timezone()')
+	format = '%Y-%m-%dT%H:%M:%S'
+	out = datetime.strptime(val, format) if isinstance(val, str) else val
+	if not isinstance(out, datetime):
+		raise TypeError('Only datetime object or ISO 8601 string can be converted')
+
+	out = LOCAL_TIMEZONE.localize(out)
+	out = out.astimezone(pytz.utc)
+
+	if to_string or to_string is None and isinstance(val, str):
+		return out.strftime(format)
+	else:
+		return out
