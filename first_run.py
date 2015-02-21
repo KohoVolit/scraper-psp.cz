@@ -11,13 +11,17 @@ def save(scraped):
     r = vpapi.get('organizations', where={'identifiers': {'$elemMatch': scraped["identifiers"][0]}})
     if not r['_items']:
         r = vpapi.post('organizations', scraped)
+#        outid = r['id']
     else:
         # update by PUT is preferred over PATCH to correctly remove properties that no longer exist now
+        nothing = 0
+#        outid = r['_items'][0]['id']
         existing = r['_items'][0]
         r = vpapi.put('organizations/%s' % existing['id'], scraped)
     if r['_status'] != 'OK':
-        raise Exception(self.name, resp)
+        raise Exception(scraped.name, r)
     return r['id']
+#    return outid
 
 
 zfile = scrapeutils.download('http://www.psp.cz/eknih/cdrom/opendata/poslanci.zip',zipped=True)
@@ -29,6 +33,7 @@ for row in organy:
     org = {
       "name": row[4].strip(),
       'classification': 'chamber',
+      'id': row[0].strip(),
       'identifiers': [
         {"identifier": term, 'scheme': 'psp.cz/term'},
         {"identifier": row[0].strip(), "scheme": 'psp.cz/organy'}
@@ -48,6 +53,7 @@ for row in organy:
     org = {
       "name": row[4].strip(),
       'classification': 'political group',
+      'id': row[0].strip(),
       'identifiers': [
         {"identifier": row[0].strip(), "scheme": 'psp.cz/organy'}
       ],
@@ -153,6 +159,7 @@ zfile = scrapeutils.download('http://www.psp.cz/eknih/cdrom/opendata/poslanci.zi
 zarazeni = scrapeutils.zipfile2rows(zfile,'zarazeni.unl')
 
 from datetime import datetime
+i = 0
 for row in zarazeni:
     r_org = vpapi.get('organizations', where={'identifiers': {'$elemMatch': {"identifier": row[1].strip(), "scheme": "psp.cz/organy"}}})
     if len(r_org["_items"]) > 0:
@@ -163,12 +170,14 @@ for row in zarazeni:
                 "role": "member",
                 "person_id": r_pers["_items"][0]['id'],
                 "organization_id": r_org["_items"][0]['id'],
+                "id": str(i),
                 "start_date": datetime.strptime(row[3].strip(), '%Y-%m-%d %H').strftime('%Y-%m-%d')
             }
             if row[4].strip() != "":
                 membership["end_date"] = datetime.strptime(row[4].strip(), '%Y-%m-%d %H').strftime('%Y-%m-%d')
       
             savemembership(membership)
+            i = i + 1
 
 
 

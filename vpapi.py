@@ -1,6 +1,7 @@
 import requests
 import json
 import base64
+import authentication
 
 """Visegrad+ parliament API client module.
 Contains functions to make API requests easily.
@@ -8,7 +9,7 @@ Contains functions to make API requests easily.
 
 __all__ = ['parliament', 'authorize', 'deauthorize', 'get', 'post', 'put', 'patch', 'delete']
 
-SERVER_NAME = '127.0.0.1:5000'
+#SERVER_NAME = '127.0.0.1:5000'
 SERVER_CERT = 'server_cert_prod.pem'
 PARLIAMENT = ''
 PAYLOAD_HEADERS = {
