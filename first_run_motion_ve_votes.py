@@ -54,9 +54,9 @@ def option2option(opt):
         return "yes"
     if opt == "B":
         return "no"
-    if opt == "C":
+    if opt == "C" or opt == "F":
         return "abstain"
-    if opt == "F" or opt == "K":
+    if opt == "K":
         return "not voting"
     else: #M, @, W
         return "absent"
@@ -98,7 +98,7 @@ def saveallmotionsandvoteevents(hl_hlasovani):
             
 
 #terms = [1993, 1996, 1998, 2002, 2006, 2010, 2013]
-terms = [2013]
+terms = [2013,2010]
 for term in terms:
     zfile = scrapeutils.download('http://www.psp.cz/eknih/cdrom/opendata/hl-'+str(term)+'ps.zip',zipped=True)
     hl_hlasovani = scrapeutils.zipfile2rows(zfile,'hl'+str(term)+'s.unl')
@@ -173,7 +173,7 @@ j = 0
 for term in terms:
     zfile = scrapeutils.download('http://www.psp.cz/eknih/cdrom/opendata/hl-'+str(term)+'ps.zip',zipped=True)
     #hl_hlasovani = scrapeutils.zipfile2rows(zfile,'hl'+str(term)+'s.unl')
-    for i in range(1,3):
+    for i in range(1,4):
         try:
             hl_poslanec = scrapeutils.zipfile2rows(zfile,'hl'+str(term)+'h'+str(i)+'.unl')
             #savevotes(hl_poslanec)
@@ -233,14 +233,17 @@ for term in terms:
                 j = j + 1
                 print(str(j) + ':' + str(j/200))
             j = 0
+            votesli = []
+            n = 0
 #            raise(Exception)
             for k in votes:
                 if (j == 10):
                     vpapi.post("votes",votesli)
                     votesli = []
-                    print(str(k) + ':' + str(k/200))
+                    print(str(n) + "/" + str(len(votes)))
                     j = 0
                 j = j + 1
+                n += 1
                 votesli = votesli + votes[k]
             vpapi.post("votes",votesli)
 #                vpapi.post("votes",votes[k])

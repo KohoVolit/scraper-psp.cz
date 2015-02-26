@@ -142,7 +142,7 @@ def delete(resource):
 		verify=SERVER_CERT
 	)
 	resp.raise_for_status()
-	return resp.json()
+	return {}
 
 def timezone(name):
 	"""Sets the local timezone to be used by `utc_to_local()` and

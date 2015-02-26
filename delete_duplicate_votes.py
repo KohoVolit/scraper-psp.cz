@@ -1,6 +1,7 @@
 # delete duplicated votes
 # duplicate is if voter_id and vote_event_id are the same
-vpapi.authorize('admin','secret')
+#vpapi.authorize('admin','secret')
+#vpapi.parliament('cz/psp')
 votes = {}
 deleted = []
 next = True
