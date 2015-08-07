@@ -87,7 +87,7 @@ def saveallmotionsandvoteevents(hl_hlasovani):
             #'identifiers': [{'identifier': row[0].strip(), 'scheme': 'psp.cz/hlasovani'}]
             "sources": [{'url':"http://www.psp.cz/sqw/hlasy.sqw?g=" + row[0].strip()}]
         }
-        #print(motion)
+        print("motion: " + motion['id'])
         r_motion = savemotion(motion)
       
         #r_motion = vpapi.get('motions', where={'sources': {'$elemMatch': {"identifier": row[0].strip(), "scheme": "psp.cz/hlasovani"}}}) #<-wrong: should be with "sources"
