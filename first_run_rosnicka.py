@@ -215,9 +215,9 @@ def option2option(opt):
         return "yes"
     if opt == "B":
         return "no"
-    if opt == "C":
+    if opt == "C" or opt == "F":
         return "abstain"
-    if opt == "F" or opt == "K":
+    if opt == "K":
         return "not voting"
     else: #M, @, W
         return "absent"
@@ -256,7 +256,7 @@ def saveallmotionsandvoteevents(hl_hlasovani):
             }
             r_voteevent = savevoteevent(vote_event)
             
-rosnicka_vote_events = ["58720", "59235", "59862", "59952", "59651", "58818", "59773", "58748", "59507", "59664", "59653", "59996", "58646", "59955", "59034", "59698", "59928", "59766", "58699", "59789", "59801", "59516", "59042", "58640", "59475", "58565", "59710", "58782"]
+rosnicka_vote_events = ["6858", "2901", "9096", "10163", "10165", "10294", "12667", "13454", "12670", "12671", "12672", "12673", "13187", "13508", "14938", "20233", "24341", "27824", "28018", "38655", "39516", "39522", "45019", "45531", "45908", "52918", "55672", "57625", "58818", "58869"]
 
 terms = [1993, 1996, 1998, 2002, 2006, 2010, 2013]
 #terms = [2013]
@@ -333,9 +333,11 @@ def savevotes(hl_poslanec):
 
 j = 0
 for term in terms:
+    print(term)
     zfile = scrapeutils.download('http://www.psp.cz/eknih/cdrom/opendata/hl-'+str(term)+'ps.zip',zipped=True)
     #hl_hlasovani = scrapeutils.zipfile2rows(zfile,'hl'+str(term)+'s.unl')
     for i in range(1,4):
+        print(i)
         try:
             hl_poslanec = scrapeutils.zipfile2rows(zfile,'hl'+str(term)+'h'+str(i)+'.unl')
             #savevotes(hl_poslanec)
@@ -348,6 +350,7 @@ for term in terms:
             terms = {}
             for rowp in hl_poslanec:
                 if rowp[1] in rosnicka_vote_events:
+                    
                     try:
                         voteevents[rowp[1].strip()]
                     except:
