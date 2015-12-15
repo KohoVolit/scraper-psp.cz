@@ -5,7 +5,7 @@ for j in range (58382,61286):
     ids = []
     for row in r:   
         ids.append(row['id'])
-    if len(ids) > 200 or len(ids) == 9:
+    if len(ids) > 200 or len(ids) <= 100:
         for idd in ids:    
             vpapi.delete("votes",idd)
         print("deleted " + str(j))

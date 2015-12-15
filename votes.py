@@ -44,13 +44,14 @@ for term in terms:
     for i in range(1,4):
         try:
             hl_poslanec = scrapeutils.zipfile2rows(zfile,'hl'+str(term)+'h'+str(i)+'.unl')
+            print('hl'+str(term)+'h'+str(i)+'.unl')
             #savevotes(hl_poslanec)
             votes = {}
             votesli = []
             existingvotes = {}
 #            terms = {}
             for rowp in hl_poslanec:
-                
+#                print(rowp)
                 
                 try:
                     voteevents[rowp[1].strip()]
@@ -61,7 +62,7 @@ for term in terms:
                 try:
                     existingvotes[r_voteevent["_items"][0]["id"]]
                 except:
-                    rex = vpapi.getall('votes',where={"vote_event_id":str(j)})
+                    rex = vpapi.getall('votes',where={"vote_event_id":r_voteevent["_items"][0]["id"]})
                     ids = []
                     for rowx in rex:   
                         ids.append(rowx['id'])
@@ -71,7 +72,9 @@ for term in terms:
                             print(r_voteevent["_items"][0]["id"] + ": " + len(ids))
                     else:
                         existingvotes[r_voteevent["_items"][0]["id"]] = False
+                    print(r_voteevent["_items"][0]["id"] + ": " + str(len(ids)))
 
+#                print(existingvotes)
                 if not existingvotes[r_voteevent["_items"][0]["id"]]:
                     
                     try:
@@ -120,7 +123,7 @@ for term in terms:
             j = 0
             votesli = []
             n = 0
-            raise(Exception)
+#            raise(Exception)
             for k in votes:
                 if (j == 1):
                     vpapi.post("votes",votesli)
