@@ -21,7 +21,7 @@ while next:
         else:
             #print("deleting:" + vote["id"])
             #raise(Exception,'')
-            vpapi.delete("votes/"+vote["id"])
+            vpapi.delete("votes",vote["id"])
             deleted.append(vote["id"])
     page = page + 1
     print(page)
