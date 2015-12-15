@@ -67,8 +67,8 @@ for term in terms:
                         ids.append(rowx['id'])
                     if len(ids) > 0:
                         existingvotes[r_voteevent["_items"][0]["id"]] = True
-                            if len(ids) < 200:
-                                print(r_voteevent["_items"][0]["id"] + ": " + len(ids)
+                        if len(ids) < 200:
+                            print(r_voteevent["_items"][0]["id"] + ": " + len(ids))
                     else:
                         existingvotes[r_voteevent["_items"][0]["id"]] = False
 
@@ -120,7 +120,7 @@ for term in terms:
             j = 0
             votesli = []
             n = 0
-#            raise(Exception)
+            raise(Exception)
             for k in votes:
                 if (j == 1):
                     vpapi.post("votes",votesli)
