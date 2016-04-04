@@ -52,19 +52,19 @@ for term in terms:
 #            terms = {}
             for rowp in hl_poslanec:
 #                print(rowp)
-                
+
                 try:
                     voteevents[rowp[1].strip()]
                 except:
                     voteevents[rowp[1].strip()] = vpapi.get('vote-events', where={'identifier': rowp[1].strip()})
                 r_voteevent = voteevents[rowp[1].strip()]
-                
+
                 try:
                     existingvotes[r_voteevent["_items"][0]["id"]]
                 except:
                     rex = vpapi.getall('votes',where={"vote_event_id":r_voteevent["_items"][0]["id"]})
                     ids = []
-                    for rowx in rex:   
+                    for rowx in rex:
                         ids.append(rowx['id'])
                     if len(ids) > 0:
                         existingvotes[r_voteevent["_items"][0]["id"]] = True
@@ -76,26 +76,26 @@ for term in terms:
 
 #                print(existingvotes)
                 if not existingvotes[r_voteevent["_items"][0]["id"]]:
-                    
+
                     try:
                         people[rowp[0].strip()]
                     except:
                         people[rowp[0].strip()] = vpapi.get('people', where={"identifiers": {"$elemMatch": {"identifier": rowp[0].strip(), "scheme": {"$regex": "psp.cz/poslanec/*", "$options": "i"} }}})
                     r_pers = people[rowp[0].strip()]
-                    
-                    try: 
+
+                    try:
                         organizations[r_pers["_items"][0]["id"]]
                     except:
-                        organizations[r_pers["_items"][0]["id"]] = vpapi.get('memberships',where={"person_id":r_pers["_items"][0]["id"]},embed=["organization"])   
+                        organizations[r_pers["_items"][0]["id"]] = vpapi.get('memberships',where={"person_id":r_pers["_items"][0]["id"]},embed=["organization"])
                     r_org = organizations[r_pers["_items"][0]["id"]]
-                  
+
                     for rowo in r_org["_items"]:
                         if rowo["organization"]["classification"] == "political group" and rowo["start_date"] <= r_voteevent["_items"][0]["start_date"]:
                             try:
                                 rowo["end_date"]
                             except:
                                 fine = True
-                            else: 
+                            else:
                                 if rowo["end_date"] >= r_voteevent["_items"][0]["start_date"]:
                                     fine = True
                                 else:
@@ -118,8 +118,8 @@ for term in terms:
                     votes[r_voteevent["_items"][0]["id"]].append(vote.copy())
                     j = j + 1
                     print(str(j) + ':' + str(j/200))
-                    
-                    
+
+
             j = 0
             votesli = []
             n = 0
@@ -138,8 +138,8 @@ for term in terms:
 #                vpapi.post("votes",votes[k])
 #            for k in votes:
 #                votesli = votesli + votes[k]
-#            vpapi.post("votes",votesli)    
+#            vpapi.post("votes",votesli)
         except:
             nothing = 1
-            logging.warning('Something went wrong with year ' + str(term) + 'and file ' + str(i) + ' (it may not exist), last vote_event_id: ' + str(last_ve_id))
-    vpapi.patch('logs', db_log['id'], {'status': "finished"})
+    #         logging.warning('Something went wrong with year ' + str(term) + 'and file ' + str(i) + ' (it may not exist), last vote_event_id: ' + str(last_ve_id))
+    # vpapi.patch('logs', db_log['id'], {'status': "finished"})

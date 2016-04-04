@@ -9,25 +9,25 @@ from datetime import date, datetime, timedelta
 import os
 import json
 
-LOGS_DIR = '/var/log/scrapers/cz/psp'
-# set-up logging to a local file
-if not os.path.exists(LOGS_DIR):
-	os.makedirs(LOGS_DIR)
-logname = datetime.utcnow().strftime('%Y-%m-%d-%H%M%S') + '.log'
-logname = os.path.join(LOGS_DIR, logname)
-logname = os.path.abspath(logname)
-logging.basicConfig(level=logging.DEBUG, format='%(message)s', handlers=[logging.FileHandler(logname, 'w', 'utf-8')])
-logging.getLogger('requests').setLevel(logging.ERROR)
-
-logging.info(datetime.utcnow().strftime('%Y-%m-%d-%H:%M:%S') + '\tStarted')
-db_log = vpapi.post('logs', {'status': 'running', 'file': logname, 'params': []})
+# LOGS_DIR = '/var/log/scrapers/cz/psp'
+# # set-up logging to a local file
+# if not os.path.exists(LOGS_DIR):
+# 	os.makedirs(LOGS_DIR)
+# logname = datetime.utcnow().strftime('%Y-%m-%d-%H%M%S') + '.log'
+# logname = os.path.join(LOGS_DIR, logname)
+# logname = os.path.abspath(logname)
+# logging.basicConfig(level=logging.DEBUG, format='%(message)s', handlers=[logging.FileHandler(logname, 'w', 'utf-8')])
+# logging.getLogger('requests').setLevel(logging.ERROR)
+#
+# logging.info(datetime.utcnow().strftime('%Y-%m-%d-%H:%M:%S') + '\tStarted')
+# db_log = vpapi.post('logs', {'status': 'running', 'file': logname, 'params': []})
 
 vpapi.parliament('cz/psp')
 vpapi.authorize(authentication.username,authentication.password)
 vpapi.timezone('Europe/Prague')
 
 def save_organization(scraped):
-    
+
     r = vpapi.get('organizations', where={'identifiers': {'$elemMatch': scraped["identifiers"][0]}})
     if not r['_items']:
         r = vpapi.post('organizations', scraped)

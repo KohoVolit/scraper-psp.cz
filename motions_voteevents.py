@@ -10,7 +10,7 @@ import logging
 from datetime import date, datetime, timedelta
 import argparse
 
-LOGS_DIR = '/var/log/scrapers/cz/psp'
+# LOGS_DIR = '/var/log/scrapers/cz/psp'
 
 vpapi.parliament('cz/psp')
 vpapi.authorize(authentication.username,authentication.password)
@@ -57,17 +57,17 @@ def savevoteevent(self):
 #        return r
 
 
-def saveallmotionsandvoteevents(hl_hlasovani): 
+def saveallmotionsandvoteevents(hl_hlasovani):
     global test
     organizations = {}
     for row in hl_hlasovani:
-        try: 
+        try:
             organizations[row[1].strip()]
         except:
-            organizations[row[1].strip()] = vpapi.get('organizations', where={'identifiers': {'$elemMatch': {"identifier": row[1].strip(), "scheme": "psp.cz/organy"}}}) 
+            organizations[row[1].strip()] = vpapi.get('organizations', where={'identifiers': {'$elemMatch': {"identifier": row[1].strip(), "scheme": "psp.cz/organy"}}})
         r_org = organizations[row[1].strip()]
       #r_org = vpapi.get('organizations', where={'identifiers': {'$elemMatch': {"identifier": row[1].strip(), "scheme": "psp.cz/organy"}}})
-      
+
         motion = {
             "id": row[0].strip(),
             "organization_id": r_org["_items"][0]['id'],
@@ -80,7 +80,7 @@ def saveallmotionsandvoteevents(hl_hlasovani):
         print("motion: " + motion['id'])
 #        print(motion)
         r_motion = savemotion(motion)
-      
+
         #r_motion = vpapi.get('motions', where={'sources': {'$elemMatch': {"identifier": row[0].strip(), "scheme": "psp.cz/hlasovani"}}}) #<-wrong: should be with "sources"
 #        if r_motion["_status"] == "OK":
         vote_event = {
@@ -98,17 +98,17 @@ def saveallmotionsandvoteevents(hl_hlasovani):
 
 
 # set-up logging to a local file
-if not os.path.exists(LOGS_DIR):
-	os.makedirs(LOGS_DIR)
-logname = datetime.utcnow().strftime('%Y-%m-%d-%H%M%S') + '.log'
-logname = os.path.join(LOGS_DIR, logname)
-logname = os.path.abspath(logname)
-logging.basicConfig(level=logging.DEBUG, format='%(message)s', handlers=[logging.FileHandler(logname, 'w', 'utf-8')])
-logging.getLogger('requests').setLevel(logging.ERROR)
+# if not os.path.exists(LOGS_DIR):
+# 	os.makedirs(LOGS_DIR)
+# logname = datetime.utcnow().strftime('%Y-%m-%d-%H%M%S') + '.log'
+# logname = os.path.join(LOGS_DIR, logname)
+# logname = os.path.abspath(logname)
+# logging.basicConfig(level=logging.DEBUG, format='%(message)s', handlers=[logging.FileHandler(logname, 'w', 'utf-8')])
+# logging.getLogger('requests').setLevel(logging.ERROR)
+#
+# logging.info('Started')
+# db_log = vpapi.post('logs', {'status': 'running', 'file': logname, 'params': []})
 
-logging.info('Started')
-db_log = vpapi.post('logs', {'status': 'running', 'file': logname, 'params': []})
-            
 
 terms = [1993, 1996, 1998, 2002, 2006, 2010, 2013]
 test = {}

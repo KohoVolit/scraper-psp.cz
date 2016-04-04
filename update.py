@@ -14,4 +14,5 @@ exec(open("motions_voteevents.py").read())
 print("motions_voteevents done")
 exec(open("votes.py").read())
 print("votes done")
-
+exec(open("clean_cache.py").read())
+print("cache cleaned")
