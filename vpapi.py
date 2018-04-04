@@ -15,10 +15,11 @@ __all__ = [
 	'timezone', 'utc_to_local', 'local_to_utc',
 ]
 
+
 SERVER_NAME = 'api.parldata.eu'
-#SERVER_NAME = '127.0.0.1:5000'
+# SERVER_NAME = '127.0.0.1:5000'
 SERVER_CERT = 'server_cert_prod.pem'
-SERVER_CERT = 'server_cert.pem'
+# SERVER_CERT = 'server_cert.pem'
 PARLIAMENT = ''
 LOCAL_TIMEZONE = None
 PAYLOAD_HEADERS = {
@@ -130,7 +131,7 @@ def post(resource, data, **kwargs):
 	`data` contains dictionary with data of the entity(ies) to create
 	and eventual parameters may be specified as keyword arguments.
 	"""
-	print(_endpoint('POST',resource))
+	print(_endpoint('POST', resource))
 	resp = requests.post(
 		_endpoint('POST', resource),
 		params=_jsonify_dict_values(kwargs),

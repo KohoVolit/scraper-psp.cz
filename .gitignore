@@ -1,5 +1,7 @@
 dev
 dev/*
 webcache
+data
 __pycache__
 authentication.py
+server_cert_prod.pem
